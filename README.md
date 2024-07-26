@@ -7,3 +7,9 @@ Please, run the folliwing in the /var/www/html folder insede the container:
 ``php index.php Migrations initDB`` - creates tables
 
 ``php index.php Migrations addTestData`` - isntall example data
+
+- website should be available on http://macro.loc:8080/
+- api route is /api
+- apikey is 12345 ``http://macro.loc:8080/?api_key=12345
+
+I will be happy if you send me a feedback!

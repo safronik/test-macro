@@ -5,9 +5,9 @@ info:
     This is a API description for the test task received in Macro company.
   contact:
     email: noone@nowhere.some
-  version: 1.0.0
+  version: 1.1.0
 servers:
-  - url: http://test.loc/api
+  - url: http://macro.loc/api
 tags:
   - name: user
     description: User paths
@@ -29,17 +29,19 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/User'
+              - $ref: "#/components/schemas/User"
           application/x-www-form-urlencoded:
             schema:
-              $ref: '#/components/schemas/User'
+              $ref: "#/components/schemas/User"
       responses:
-        default:
-          description: successful operation
+        '200':
+          description: Successful Operation
           content:
             application/json:
               schema:
-                $ref: #/components/schemas/ResponseSuccess
+                oneOf:
+                  - $ref: "#/components/schemas/ResponseSuccessCreate"
+                  - $ref: "#/components/schemas/ResponseError"
     get:
       tags:
         - user
@@ -58,7 +60,9 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/User'
+                type: array
+                items:
+                  - $ref: "#/components/schemas/User"
         '400':
           description: Invalid id supplied
         '404':
@@ -81,17 +85,17 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/User'
+              $ref: "#/components/schemas/User"
           application/x-www-form-urlencoded:
             schema:
-              $ref: '#/components/schemas/User'
+              $ref: "#/components/schemas/User"
       responses:
         '200':
           description: successful operation
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/User'
+                $ref: "#/components/schemas/User"
         '400':
           description: Invalid id supplied
         '404':
@@ -116,49 +120,6 @@ paths:
           description: Invalid username supplied
         '404':
           description: User not found
-  /user/login:
-    get:
-      tags:
-        - autentication
-        - user
-      summary: Logs user into the system
-      operationId: loginUser
-      parameters:
-        - name: username
-          in: query
-          description: The user name for login
-          required: false
-          schema:
-            type: string
-        - name: password
-          in: query
-          description: The password for login in clear text
-          required: false
-          schema:
-            type: string
-      responses:
-        '200':
-          description: successful operation
-          content:
-            application/json:
-              schema:
-                oneOf:
-                  - $ref: '#/components/schemas/ResponseSuccess'
-                  - $ref: '#/components/schemas/ResponseError'
-        '400':
-          description: Invalid username/password supplied
-  /user/logout:
-    get:
-      tags:
-        - autentication
-        - user
-      summary: Logs out current logged in user session
-      description: ''
-      operationId: logoutUser
-      parameters: [ ]
-      responses:
-        default:
-          description: successful operation
   /atricle:
     post:
       tags:
@@ -170,20 +131,20 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Article'
+              $ref: "#/components/schemas/Article"
           application/x-www-form-urlencoded:
             schema:
-              $ref: '#/components/schemas/Article'
+              $ref: "#/components/schemas/Article"
         required: true
       responses:
         '200':
-          description: Successful operation
+          description: Successful Operation
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Article'
-        '405':
-          description: Invalid input
+                oneOf:
+                  - $ref: "#/components/schemas/ResponseSuccessCreate"
+                  - $ref: "#/components/schemas/ResponseError"
     get:
       tags:
         - article
@@ -202,10 +163,9 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/User'
-            application/xml:
-              schema:
-                $ref: '#/components/schemas/User'
+                type: array
+                items:
+                  - $ref: "#/components/schemas/Article"
         '400':
           description: Invalid username supplied
         '404':
@@ -226,10 +186,10 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Article'
+              $ref: "#/components/schemas/Article"
           application/x-www-form-urlencoded:
             schema:
-              $ref: '#/components/schemas/Article'
+              $ref: "#/components/schemas/Article"
         required: true
       responses:
         '200':
@@ -237,10 +197,10 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Article'
+                $ref: "#/components/schemas/Article"
             application/xml:
               schema:
-                $ref: '#/components/schemas/Article'
+                $ref: "#/components/schemas/Article"
         '400':
           description: Invalid ID supplied
         '404':
@@ -272,17 +232,22 @@ paths:
       tags:
         - article
         - comment
-      summary: Get comments for article with pagination
+      summary: Get comments for the article with pagination
       operationId: getArticleCommentsWithPagination
       parameters:
         - name: offset
           in: query
-          required: true
+          required: false
           schema:
             type: integer
         - name: amount
           in: query
-          required: true
+          required: false
+          schema:
+            type: integer
+        - name: page_number
+          in: query
+          required: false
           schema:
             type: integer
       responses:
@@ -294,16 +259,22 @@ paths:
                 type: array
                 minItems: 0
                 items:
-                  $ref: '#/components/schemas/Comment'
+                  $ref: "#/components/schemas/Comment"
         '405':
           description: Invalid input
-  /artilce/comments/all:
+  /artilce/list:
     get:
       tags:
         - article
         - comment
       summary: Get all comments for article
       operationId: getArticleCommentsAll
+      parameters:
+        - name: page_number
+          in: query
+          required: true
+          schema:
+            type: integer
       responses:
         '200':
           description: Successful operation
@@ -313,7 +284,7 @@ paths:
                 type: array
                 minItems: 0
                 items:
-                  $ref: '#/components/schemas/Comment'
+                  $ref: "#/components/schemas/Comment"
         '405':
           description: Invalid input
   /comment:
@@ -326,29 +297,20 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Comment'
+              $ref: "#/components/schemas/Comment"
           application/x-www-form-urlencoded:
             schema:
-              $ref: '#/components/schemas/Comment'
+              $ref: "#/components/schemas/Comment"
         required: true
       responses:
         '200':
-          description: Successful operation
-          headers:
-            X-Rate-Limit-Name:
-              description: calls per minute allowed by the name
-              schema:
-                type: integer
-                format: int32
-            X-Expires-After:
-              description: date in UTC when token expires
-              schema:
-                type: string
-                format: date-time
+          description: Successful Operation
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Comment'
+                oneOf:
+                  - $ref: "#/components/schemas/ResponseSuccessCreate"
+                  - $ref: "#/components/schemas/ResponseError"
         '405':
           description: Invalid input
         '425':
@@ -362,7 +324,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ResponseError'
+                $ref: "#/components/schemas/ResponseError"
     get:
       tags:
         - comment
@@ -381,10 +343,9 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/User'
-            application/xml:
-              schema:
-                $ref: '#/components/schemas/User'
+                type: array
+                items:
+                  - $ref: "#/components/schemas/Comment"
         '400':
           description: Invalid username supplied
         '404':
@@ -405,10 +366,10 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Comment'
+              $ref: "#/components/schemas/Comment"
           application/x-www-form-urlencoded:
             schema:
-              $ref: '#/components/schemas/Comment'
+              $ref: "#/components/schemas/Comment"
         required: true
       responses:
         '200':
@@ -416,10 +377,10 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Comment'
+                $ref: "#/components/schemas/Comment"
             application/xml:
               schema:
-                $ref: '#/components/schemas/Comment'
+                $ref: "#/components/schemas/Comment"
         '400':
           description: Invalid ID supplied
         '404':
@@ -449,6 +410,7 @@ paths:
 components:
   schemas:
     User:
+      title: User
       type: object
       properties:
         id:
@@ -467,9 +429,8 @@ components:
         email:
           type: string
           examples: [ john@email.com ]
-      xml:
-        name: user
     Article:
+      title: Article
       type: object
       properties:
         id:
@@ -477,14 +438,19 @@ components:
           format: int64
           examples: [1]
         author:
-          $ref: '#/components/schemas/User'
+          $ref: "#/components/schemas/User"
         heading:
           type: string
           examples: [ Something about something ]
         body:
           type: string
           examples: [ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Facilisi nisi et cillum volutpat proident erat facilisis sanctus commodi. Iriure nonumy aliquyam. ]
+        comments:
+          type: array
+          items:
+            $ref: "#/components/schemas/Comment"
     Comment:
+      title: Comment
       type: object
       properties:
         id:
@@ -497,32 +463,50 @@ components:
         user:
           anyOf:
             - type: 'null'
-            - $ref: '#/components/schemas/User'
-        article:
-          $ref: '#/components/schemas/Article'
+            - $ref: "#/components/schemas/User"
         approved:
           type: boolean
-      xml:
-        name: order
     ResponseSuccess:
+      title: Success Response
       type: object
       properties:
-        success:
+        error:
           type: boolean
+          examples: [ false ]
         message:
           type: string
-          examples: [ 'You have been logged in successfully' ]
         count:
           type: integer
         data:
           type: array
-    ResponseError:
+          items:
+            anyOf:
+              - $ref: "#/components/schemas/User"
+              - $ref: "#/components/schemas/Article"
+              - $ref: "#/components/schemas/Comment"
+    ResponseSuccessCreate:
+      title: Success Response
       type: object
       properties:
         error:
+          type: boolean
+          examples: [ false ]
+        message:
+          type: string
+        count:
           type: integer
-          format: integer
-          examples: [ 1,2,3 ]
+        data:
+          type: object
+          properties:
+            inserted_id:
+              type: integer
+    ResponseError:
+      title: Error Response
+      type: object
+      properties:
+        error:
+          type: boolean
+          examples: [ true ]
         message:
           type: string
           examples: [ 'You are not allowed to post this fast' ]

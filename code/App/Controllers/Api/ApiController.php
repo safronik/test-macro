@@ -17,22 +17,22 @@ abstract class ApiController extends Controller{
     
     public function methodGet(): void
     {
-        $this->outputError( 'Not implemented' );
+        $this->outputError( new \Exception('Method not implemented', 501 ) );
     }
     
     public function methodPost(): void
     {
-        $this->outputError( 'Not implemented' );
+        $this->outputError( new \Exception('Method not implemented', 501 ) );
     }
     
     public function methodPut(): void
     {
-        $this->outputError( 'Not implemented' );
+        $this->outputError( new \Exception('Method not implemented', 501 ) );
     }
     
     public function methodDelete(): void
     {
-        $this->outputError( 'Not implemented' );
+        $this->outputError( new \Exception('Method not implemented', 501 ) );
     }
     
     protected function init(): void
@@ -54,31 +54,30 @@ abstract class ApiController extends Controller{
                 throw new \Exception( 'Wrong api key');
             
         }catch( \Exception $exception ){
-            $this->outputError( $exception->getMessage() );
+            $this->outputError( $exception );
         }
     }
     
-    protected function outputError( $message, $code = 0 ): void
+    protected function outputError( \Exception $exception ): void
     {
         $view = new JsonView();
         $view->render(
             [
-                'eroror'  => $code,
-                'message' => $message,
+                'error'   => true,
+                'message' => $exception->getMessage(),
             ],
-            402
+            $exception->getCode()
         );
     }
     
     /**
      * @param EntityObject|EntityObject[] $data
-     * @param                             $message
-     * @param                             $code
+     * @param string                      $message
      *
      * @return void
      * @throws \JsonException
      */
-    protected function outputSuccess( array|EntityObject $data, $message = '', $code = 0 ): void
+    protected function outputSuccess( array|EntityObject $data, string $message = '' ): void
     {
         $data = is_array( $data ) ? $data : [ $data ];
         
@@ -92,7 +91,7 @@ abstract class ApiController extends Controller{
         $view = new JsonView();
         $view->render(
             [
-                'success' => true,
+                'error'   => false,
                 'message' => $message,
                 'count'   => count( $data ),
                 'data'    => $data,

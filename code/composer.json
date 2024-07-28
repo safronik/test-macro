@@ -3,9 +3,10 @@
     "description": "Test for Macro",
     "type": "project",
     "require": {
-        "safronik/db-wrapper": "dev-master",
-        "safronik/globals": "dev-master",
-        "safronik/db-migrator": "dev-master"
+        "safronik/db-wrapper": "^0.1",
+        "safronik/globals": "^0.1",
+        "safronik/db-migrator": "^0.1",
+        "safronik/helpers": "^0.1"
     },
     "license": "gnu",
     "authors": [

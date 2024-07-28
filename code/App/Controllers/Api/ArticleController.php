@@ -25,7 +25,7 @@ final class ArticleController extends ApiController{
             );
             
         }catch( \Exception $exception ){
-            $this->outputError( $exception->getMessage() );
+            $this->outputError( $exception );
         }
     }
     
@@ -41,19 +41,19 @@ final class ArticleController extends ApiController{
                 ]
             );
             
-            $inserted_ids = Articles::new( [
+            $inserted_id = Articles::new( [
                 'author'  => $this->request->body['author'],
                 'heading' => $this->request->body['heading'],
                 'body'    => $this->request->body['body'],
-            ] );
+            ] )[0];
             
             $this->outputSuccess(
-                [ 'inserted_ids' => $inserted_ids ],
+                [ 'inserted_id' => $inserted_id ],
                 'Articles added'
             );
             
         }catch( \Exception $exception ){
-            $this->outputError( $exception->getMessage() );
+            $this->outputError( $exception );
         }
     }
     
@@ -63,8 +63,7 @@ final class ArticleController extends ApiController{
             ValidationHelper::validate(
                 $this->request->parameters,
                 [
-                    // 'id'          => Article::$rules['id'],
-                    'page_number' => [ 'type' => 'integer' ],
+                    'page_number' => [ 'required', 'type' => 'integer' ],
                 ]
             );
             
@@ -74,7 +73,7 @@ final class ArticleController extends ApiController{
             );
             
         }catch( \Exception $exception){
-            $this->outputError( $exception->getMessage() );
+            $this->outputError( $exception );
         }
     }
 
@@ -102,7 +101,7 @@ final class ArticleController extends ApiController{
             $this->outputSuccess( $comments );
             
         }catch( \Exception $exception ){
-            $this->outputError( $exception->getMessage() );
+            $this->outputError( $exception );
         }
     }
 }

@@ -24,7 +24,7 @@ final class UserController extends ApiController{
             $this->outputSuccess( $user );
             
         }catch( \Exception $exception ){
-            $this->outputError( $exception->getMessage() );
+            $this->outputError( $exception );
         }
     }
     
@@ -41,22 +41,20 @@ final class UserController extends ApiController{
                 ]
             );
             
-            $inserted_ids = Users::new(
-                [
+            $inserted_id = Users::new( [
                     'username'   => $this->request->body['username'],
                     'first_name' => $this->request->body['first_name'] ?? null,
                     'last_name'  => $this->request->body['last_name']  ?? null,
                     'email'      => $this->request->body['email'],
-                ]
-            );
+                ] )[0];
             
             $this->outputSuccess(
-                [ 'inserted_ids' => $inserted_ids ],
+                [ 'inserted_id' => $inserted_id ],
                 'Users added'
             );
             
         }catch( \Exception $exception ){
-            $this->outputError( $exception->getMessage() );
+            $this->outputError( $exception );
         }
     }
     
@@ -72,10 +70,13 @@ final class UserController extends ApiController{
             
             Users::remove( ['id' => $this->request->parameters['id'] ] );
             
-            ( new JsonView() )->render( "User with id {$this->request->parameters['id']} is deleted" );
+            $this->outputSuccess(
+                [],
+                "User with id {$this->request->parameters['id']} is deleted"
+            );
             
         }catch( \Exception $exception ){
-            $this->outputError( $exception->getMessage() );
+            $this->outputError( $exception );
         }
     }
 }

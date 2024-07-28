@@ -37,11 +37,11 @@ class Repository implements EntityRepositoryInterface
      * Validates only new entities. No validation if data comes from DB.
      *
      * @param array $data
+     * @param bool  $new
      *
      * @return EntityObject[]|EntityObject
-     * @throws \Exception
      */
-    public function create( array $data, $new = false ): array|EntityObject
+    public function create( array $data, bool $new = false ): array|EntityObject
     {
         $rules = $this->entity::$rules;
         
@@ -52,9 +52,7 @@ class Repository implements EntityRepositoryInterface
         $entities = [];
         foreach( $data as &$datum ){
             
-            if( $new ){
-                $datum['id'] = null;
-            }
+            $datum['id'] ??= null;
             
             ValidationHelper::validate( $datum, $rules );
             SanitizerHelper::sanitize( $datum, $rules );

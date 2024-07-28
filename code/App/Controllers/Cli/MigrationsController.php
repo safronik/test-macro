@@ -85,8 +85,7 @@ final class MigrationsController extends CliController{
             }
             
             $comment_repo = new Repository( DB::getInstance(), Comment::class );
-            $comments = Comment::fabricRandom( 100 );
-            foreach($comments as $comment){
+            foreach( Comment::fabricRandom( 100 ) as $comment ){
                 $comment_repo->save( $comment );
             }
             
@@ -116,31 +115,22 @@ final class MigrationsController extends CliController{
     public function methodCheckDB(): void
     {
         $domains_schema_provider = new DomainsSchemaProvider(
-            __DIR__ . '/../../Models',
-                'Models'
+            __DIR__ . '/../../Entities',
+                'Entities'
         );
         
         $this->migrator
             ->setSchemas( $domains_schema_provider->getDomainsSchemas() )
             ->compareWithCurrentStructure();
         
+        echo "-- Tables to create:\n";
+        foreach($this->migrator->getNotExistingTables() as $table){
+            echo "$table\n";
+        }
         
-        // Views::get('cli')
-        //     ->output([
-                echo "-- Tables to create:\n";
-                foreach($migrator->getNotExistingTables() as $table) echo "$table\n";
-                echo "\n -- Tables to update:\n";
-                foreach($migrator->getTablesToUpdate() as $table) echo "$table\n";
-            // ]);
-    }
-    
-    public function getActualSchemas(): void
-    {
-        $domains_schema_provider = new DomainsSchemaProvider(
-            __DIR__ . '/lib/Safronik/Models/Domains',
-            'Safronik\Models\Domains'
-        );
-        
-        Views::get('cli')->output([ $domains_schema_provider->getDomainsSchemas() ]);
+        echo "\n -- Tables to update:\n";
+        foreach($this->migrator->getTablesToUpdate() as $table){
+            echo "$table\n";
+        }
     }
 }

@@ -1,5 +1,8 @@
 ### Hello!
 
+- run docker compose up
+- let it work for a minute
+- test data should be filled automatically via cli commands
 - website should be available on http://macro.loc:8080/
 - please don't forget to modify hosts file
 - api route is /api
